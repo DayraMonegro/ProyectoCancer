@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Interactivo - Cáncer Global</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <style>
+    body {
+      background-color: #1e1e2f; /* Fondo oscuro elegante */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+
+    .chart-container {
+      padding: 1rem;
+      background-color: #2e2e3e;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #b39ddb;
+      text-align: center;
+    }
+
+    .header {
+      text-align: center;
+      padding: 40px 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+    }
+
+    .header h1 {
+      color: white;
+      font-weight: 600;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .header img {
+      width: 80px;
+      margin-bottom: 15px;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .table-container {
+      padding: 20px;
+    }
+
+    #cancerTable th {
+      background-color: #9c27b0;
+      color: white;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .error {
+      text-align: center;
+      padding: 30px;
+      font-size: 18px;
+      color: #dc3545;
+    }
+
+    .nav-link.active {
+      background-color: #9c27b0 !important;
+      color: white !important;
+    }
+
+    .nav-link {
+      color: #ce93d8;
+      font-weight: 500;
+    }
+
+    .tab-content {
+      padding: 20px 0;
+    }
+
+    .dataTables_wrapper {
+      background-color: #2e2e3e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      color: white;
+    }
+
+    table.dataTable tbody td {
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="header">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTQ4MCAyNTZjMCAxMTQtMjMuMiAyMjMuMi02NS4yIDMwNC00Mi4xIDgwLjgtMTAzLjggMTQ1LjItMTc4LjggMTg5LTIgMS00LjEgMS42LTYuNCAxLjYtMTEuNCAwLTIwLjQtOS0yMC40LTIwLjQgMC01LjQgMi4xLTEwLjQgNS45LTE0LjEgMTQ1LjItMTIxLjkgMjM0LjItMzEwLjQgMjM0LjItNDU2LjQgMC0xNDYtODkuMS0zMzQuNS0yMzQuMi00NTYuNC0zLjgtMy44LTUuOS04LjctNS45LTE0LjEgMC0xMS40IDktMjAuNCAyMC40LTIwLjQgMi4zIDAgNC40LjYgNi40IDEuNiA3NSAxNDMuOCAxMzYuNyAzMDguMiAxNzguOCAxODkgNDIgODAuOCA2NS4yIDE5MCA2NS4yIDMwNHpNMjU2IDQ4YzExNC45IDAgMjA4IDkzLjEgMjA4IDIwOHMtOTMuMSAyMDgtMjA4IDIwOFM0OCAzNjIuOSA0OCAyNDggMTQxLjEgNDggMjU2IDQ4em0wIDMxMmM1Ny40IDAgMTA0LTQ2LjYgMTA0LTEwNHMtNDYuNi0xMDQtMTA0LTEwNC0xMDQgNDYuNi0xMDQgMTA0IDQ2LjYgMTA0IDEwNCAxMDR6bTAtMTYwYzMwLjkgMCA1NiAyNS4xIDU2IDU2cy0yNS4xIDU2LTU2IDU2LTU2LTI1LjEtNTYtNTYgMjUuMS01NiA1Ni01NnoiLz48L3N2Zz4=" alt="Icono cáncer">
+      <h1>Datos Globales de Cáncer</h1>
+    </div>
+    
+    <!-- Navegación de pestañas -->
+    <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="datos-tab" data-bs-toggle="tab" data-bs-target="#datos" type="button" role="tab" aria-controls="datos" aria-selected="true">
+          🧾 Datos Tabulares
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="graficos-tab" data-bs-toggle="tab" data-bs-target="#graficos" type="button" role="tab" aria-controls="graficos" aria-selected="false">
+          📊 Visualizaciones Gráficas
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="dashboardTabsContent">
+      <!-- Pestaña de Datos -->
+      <div class="tab-pane fade show active" id="datos" role="tabpanel" aria-labelledby="datos-tab">
+        <div class="mb-4">
+          <h2 class="section-title">📄 Tabla de Datos</h2>
+          <div class="table-container">
+            <table id="cancerTable" class="table table-striped table-hover" style="width:100%">
+              <thead>
+                <tr>
+                  <th>🌍 País</th>
+                  <th>🧬 Tipo de Cáncer</th>
+                  <th>👫 Sexo</th>
+                  <th>📅 Año</th>
+                  <th>📈 Casos</th>
+                  <th>⚰️ Muertes</th>
+                  <th>🗺️ Región</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Los datos se cargarán aquí -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pestaña de Gráficos -->
+      <div class="tab-pane fade" id="graficos" role="tabpanel" aria-labelledby="graficos-tab">
+        <h2 class="section-title">📈 Visualización de Datos</h2>
+        <div class="row g-4">
+          <!-- Aquí los 10 gráficos -->
+          <!-- chart1 - chart10 ya incluidos como antes -->
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">1. Casos de Cáncer por País</h3><canvas id="chart1"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">2. Distribución por Tipo de Cáncer</h3><canvas id="chart2"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">3. Muertes por Región</h3><canvas id="chart3"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">4. Proporción por Género</h3><canvas id="chart4"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">5. Tendencias Anuales</h3><canvas id="chart5"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">6. Top 10 Países con Más Casos</h3><canvas id="chart6"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">7. Relación Casos vs Muertes</h3><canvas id="chart7"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">8. Distribución por Región</h3><canvas id="chart8"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">9. Tipos de Cáncer por Género</h3><canvas id="chart9"></canvas></div></div>
+          <div class="col-md-6"><div class="chart-container"><h3 class="chart-title">10. Mortalidad por Tipo de Cáncer</h3><canvas id="chart10"></canvas></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
